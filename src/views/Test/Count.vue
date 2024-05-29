@@ -11,6 +11,6 @@ const count = ref(0)
 
 <style scoped>
 button {
-  /* font-weight: bold; */
+  font-weight: bold;
 }
 </style>
