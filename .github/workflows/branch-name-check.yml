@@ -1,0 +1,30 @@
+name: Branch and Commit Message Check
+
+on: [push]
+
+jobs:
+  check-branch-name-and-commit-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Validate branch name
+        run: |
+          branch_name=$(echo ${{ github.ref }} | sed 's|refs/heads/||')
+          branch_regex="^(feature|bugfix|hotfix|release)/[a-zA-Z0-9._-]+$"
+          if [[ ! $branch_name =~ $branch_regex ]]; then
+            echo "Branch name '$branch_name' does not follow the naming convention!"
+            echo "Branch names should match the pattern: $branch_regex"
+            exit 1
+          fi
+      - name: Validate commit messages
+        run: |
+          commit_regex="^[A-Z][A-Za-z0-9\s,.'!]+$"
+          for commit in $(git log origin/${{ github.ref_name }}..${{ github.sha }} --format=%H); do
+            message=$(git log --format=%B -n 1 $commit)
+            if [[ ! $message =~ $commit_regex ]]; then
+              echo "Commit message '$message' does not follow the naming convention!"
+              echo "Commit messages should match the pattern: $commit_regex"
+              exit 1
+            fi
+          done
