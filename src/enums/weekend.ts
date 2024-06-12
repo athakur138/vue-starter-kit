@@ -1,5 +1,5 @@
 export enum Weekend {
-    FRIDAY = 1,
+    FRIDAY = 11,
     SATURDAY = 13,
     SUNDAY = 5,
 }
